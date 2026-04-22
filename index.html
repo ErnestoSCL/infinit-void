@@ -642,6 +642,37 @@
             const prevTech = currentTechnique;
 
             // ═══════════════════════════════════════════════
+            //  PRIORITY 0: Sukuna Domain (prayer hands)
+            // ═══════════════════════════════════════════════
+            const sukunaPrayer = detectSukunaPrayer(leftLm, rightLm);
+            if (sukunaPrayer && sukunaPhase === 0 && !projectileActive) {
+                sukunaPhase = 1; sukunaTimer = 0;
+                setShape(sukunaSystem, genSukunaIntro);
+                sukunaSystem.currentShape = 'sukunaIntro';
+                sukunaSystem.worldPos.set(0, 0, 0);
+                sukunaSystem.targetWorldPos.set(0, 0, 0);
+                currentTechnique = 'sukuna';
+                updateUI('sukuna');
+            }
+            if (sukunaPhase > 0) {
+                currentTechnique = 'sukuna';
+                purpleMode = false;
+                if (fusionActive) { fusionActive = false; fusionPhase = 0; }
+                sukunaSystem.visible = true; sukunaSystem.opacity = 1;
+                redSystem.visible = false; redSystem.opacity = 0;
+                blueSystem.visible = false; blueSystem.opacity = 0;
+                if (sukunaPhase === 1) { bloomPass.strength = CONFIG.SUKUNA.introBloom; shakeIntensity = CONFIG.SUKUNA.introShake; }
+                else { bloomPass.strength = CONFIG.SUKUNA.bloom; shakeIntensity = CONFIG.SUKUNA.shake; }
+            }
+            // Other gesture clears sukuna
+            if ((leftCrossed || rightCrossed) && sukunaPhase > 0) {
+                sukunaPhase = 0; sukunaTimer = 0;
+                sukunaSystem.visible = false; sukunaSystem.opacity = 0;
+                sukunaSystem.currentShape = '';
+                dimOverlay.style.background = '#000';
+            }
+
+            // ═══════════════════════════════════════════════
             //  PRIORITY 1: Unlimited Void (crossed fingers)
             // ═══════════════════════════════════════════════
 
@@ -651,8 +682,8 @@
                 redSystem.visible = false; blueSystem.visible = false;
             }
 
-            // Trigger & Maintain
-            if ((leftCrossed || rightCrossed || voidPhase === 1) && !projectileActive) {
+            // Trigger & Maintain (skip if Sukuna shrine is active)
+            if ((leftCrossed || rightCrossed || voidPhase === 1) && !projectileActive && sukunaPhase === 0) {
                 currentTechnique = 'void';
                 purpleMode = false;
                 if (fusionActive) { fusionActive = false; fusionPhase = 0; }
