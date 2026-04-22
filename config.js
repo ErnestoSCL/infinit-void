@@ -15,8 +15,8 @@ const CONFIG = {
     RED: {
         coreRatio: 0.12,
         coreRadius: 7,
-        coreColor: { r: 5.0, g: 0.15, b: 0.1 },   // Brighter hot white-red core
-        coreSize: 3.2,
+        coreColor: { r: 8.0, g: 0.2, b: 0.1 },   // Even brighter hot white-red core
+        coreSize: 4.0,
 
         arms: 3,
         spiralSpeed: 15,
@@ -28,7 +28,7 @@ const CONFIG = {
 
         rotationSpeed: -0.025,
 
-        bloom: 4.5,
+        bloom: 7.0,
         shake: 0.18,
     },
 
@@ -36,8 +36,8 @@ const CONFIG = {
     BLUE: {
         coreRatio: 0.12,
         coreRadius: 7,
-        coreColor: { r: 0.3, g: 0.8, b: 5.0 },   // Blazing blue-white core
-        coreSize: 3.2,
+        coreColor: { r: 0.4, g: 1.0, b: 8.0 },   // Even brighter blazing blue-white core
+        coreSize: 4.0,
 
         arms: 3,
         spiralSpeed: 15,
@@ -49,7 +49,7 @@ const CONFIG = {
 
         rotationSpeed: -0.025,
 
-        bloom: 4.5,
+        bloom: 7.0,
         shake: 0.18,
     },
 
@@ -76,15 +76,15 @@ const CONFIG = {
 
     // =================== FUSION ANIMATION (quay vòng hút nhau) ===================
     FUSION: {
-        orbitSpeed: 0.018,           // Slower orbit — longer dance
-        orbitStartRadius: 30,        // Larger starting orbit radius
+        orbitSpeed: 0.009,           // Much slower orbit — longer dance
+        orbitStartRadius: 40,        // Larger starting orbit radius
 
-        spiralShrinkRate: 0.993,     // Very slow spiral — longer convergence
-        spiralSpeedUp: 1.004,        // Gentler speed-up
+        spiralShrinkRate: 0.996,     // Extremely slow spiral — longest convergence
+        spiralSpeedUp: 1.002,        // Gentler speed-up
         collisionRadius: 2,
 
-        explosionDuration: 180,      // 3x longer explosion (was 70) — dramatic reform
-        explosionScatter: 90,        // More scatter = more dramatic burst
+        explosionDuration: 280,      // Much longer explosion (was 180) — dramatic reform
+        explosionScatter: 110,        // More scatter = more dramatic burst
         explosionBloom: 8.0,         // Max bloom on impact
         explosionShake: 2.0,
         reformSpeed: 0.04,

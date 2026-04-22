@@ -203,6 +203,16 @@
             animation: ring-spin 10s linear infinite;
         }
         @keyframes ring-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        #flash-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 6;
+            opacity: 0;
+            background-color: transparent;
+            mix-blend-mode: screen;
+        }
     </style>
 
     <script type="importmap">
@@ -236,6 +246,7 @@
     <div id="dim-overlay"></div>
     <div id="void-glow"></div>
     <div id="void-ring"></div>
+    <div id="flash-overlay"></div>
 
     <script type="module">
         import * as THREE from 'three';
@@ -251,6 +262,19 @@
         const dimOverlay = document.getElementById('dim-overlay'); // Reference to overlay
         const voidGlow = document.getElementById('void-glow');
         const voidRing = document.getElementById('void-ring');
+        const flashOverlay = document.getElementById('flash-overlay');
+
+        function triggerFlash(colorStr) {
+            flashOverlay.style.transition = 'none';
+            flashOverlay.style.backgroundColor = colorStr;
+            flashOverlay.style.opacity = 0.5; // Flash intensity
+            
+            void flashOverlay.offsetWidth; // Force reflow
+            
+            flashOverlay.style.transition = 'opacity 0.8s ease-out';
+            flashOverlay.style.opacity = 0;
+        }
+
         const scene = new THREE.Scene();
         const cam3d = new THREE.PerspectiveCamera(CONFIG.CAMERA.fov, window.innerWidth / window.innerHeight, 0.1, 1000);
         cam3d.position.z = CONFIG.CAMERA.cameraZ;
@@ -813,6 +837,10 @@
                         }
 
                         purpleMode = false;
+                        triggerFlash('#a020f0'); // Purple flash
+                    } else {
+                        if (chargeHand === 'left') triggerFlash('#ff2222'); // Red flash
+                        else triggerFlash('#2288ff'); // Blue flash
                     }
                     chargeActive = false;
                     chargeTimer = 0;
