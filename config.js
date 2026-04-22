@@ -29,11 +29,11 @@ const CONFIG = {
         armSize: 1.0,
 
         // Rotation
-        rotationSpeed: -0.08,   // Tốc độ xoay (âm = ngược chiều kim đồng hồ)
+        rotationSpeed: -0.025,   // Slowed rotation (was -0.08)
 
         // Bloom & shake
         bloom: 2.5,
-        shake: 0.25,
+        shake: 0.18,
     },
 
     // =================== BLUE BALL (tay phải) ===================
@@ -54,11 +54,11 @@ const CONFIG = {
         armSize: 1.0,
 
         // Rotation
-        rotationSpeed: -0.08,   // Tốc độ xoay (âm = ngược chiều kim đồng hồ)
+        rotationSpeed: -0.025,   // Slowed rotation (was -0.08)
 
         // Bloom & shake
         bloom: 2.5,
-        shake: 0.25,
+        shake: 0.18,
     },
 
     // =================== PURPLE (dung hợp) ===================
@@ -72,9 +72,9 @@ const CONFIG = {
         outerColor: { r: 0.5, g: 0.5, b: 0.7 },
         outerSize: 0.8,
 
-        rotationSpeedA: 0.15,   // Hệ red xoay
-        rotationSpeedB: -0.12,  // Hệ blue xoay ngược
-        rotationY: 0.03,
+        rotationSpeedA: 0.04,   // Slowed (was 0.15)
+        rotationSpeedB: -0.03,  // Slowed (was -0.12)
+        rotationY: 0.008,
 
         fusionDistance: 220,     // Khoảng cách (px trên màn hình) để kích hoạt fusion
 
@@ -85,24 +85,24 @@ const CONFIG = {
     // =================== FUSION ANIMATION (quay vòng hút nhau) ===================
     FUSION: {
         // Phase 1: Quỹ đạo xoay quanh nhau (binary star orbit)
-        orbitSpeed: 0.08,           // Tốc độ xoay quanh tâm (rad/frame)
+        orbitSpeed: 0.028,           // Slowed orbit (was 0.08)
         orbitStartRadius: 20,       // Bán kính quỹ đạo ban đầu (world units)
 
         // Phase 2: Xoắn ốc hút vào nhau
-        spiralShrinkRate: 0.97,     // Mỗi frame bán kính x= giá trị này (< 1 = hút vào)
-        spiralSpeedUp: 1.02,        // Tốc độ xoay tăng dần
+        spiralShrinkRate: 0.985,     // Slower spiral collapse (was 0.97)
+        spiralSpeedUp: 1.008,        // Slower speed-up (was 1.02)
         collisionRadius: 2,        // Khi bán kính < giá trị này → va chạm
 
         // Phase 3: Vụ nổ + hình thành
-        explosionDuration: 40,      // Số frame vụ nổ
+        explosionDuration: 70,      // Longer explosion (was 40)
         explosionScatter: 60,       // Hạt bay xa tới đâu lúc nổ
         explosionBloom: 6.0,        // Bloom lúc nổ
         explosionShake: 1.5,        // Rung lúc nổ
-        reformSpeed: 0.08,          // Tốc độ hạt quay về dạng cầu tím
+        reformSpeed: 0.05,          // Slower reform (was 0.08)
 
         // Hiệu ứng khi đang orbit
         orbitBloom: 3.5,
-        orbitShake: 0.3,
+        orbitShake: 0.2,
     },
 
     // =================== UNLIMITED VOID ===================
@@ -116,8 +116,8 @@ const CONFIG = {
         outerColor: { r: 0.1, g: 0.6, b: 1.0 },
         outerSize: 0.7,
 
-        rotationZ: 0.004,           // Tốc độ xoay quanh trục Z
-        rotationX: 0.001,           // Tốc độ xoay quanh trục X (tạo cảm giác 3D)
+        rotationZ: 0.0018,           // Slowed Z rotation (was 0.004)
+        rotationX: 0.0004,           // Slowed X rotation (was 0.001)
 
         bloom: 3,
         shake: 0,
@@ -127,10 +127,10 @@ const CONFIG = {
         posZ: 0,
 
         // Warp speed intro (du hành thời gian)
-        warpDuration: 60,          // Số frame warp intro (tăng lên = lâu hơn)
-        warpSpeed: 10,             // Tốc độ bay ngang cực nhanh (tạo vệt dài)
+        warpDuration: 90,          // Longer warp intro (was 60)
+        warpSpeed: 6,              // Slower warp streaks (was 10)
         warpBloom: 5.0,             // Bloom rực rỡ
-        warpShake: 2.0,             // Rung mạnh hơn
+        warpShake: 1.5,             // Rung mạnh hơn
     },
 
     // =================== BLOOM (post-processing) ===================
@@ -151,12 +151,12 @@ const CONFIG = {
 
     // =================== ANIMATION ===================
     ANIMATION: {
-        positionLerpSpeed: 0.5,    // Tốc độ di chuyển quả cầu theo tay (0-1)
-        morphLerpSpeed: 0.1,        // Tốc độ morph hạt sang hình mới
-        fadeInSpeed: 0.08,          // Tốc độ xuất hiện
-        fadeOutSpeed: 0.04,         // Tốc độ biến mất
-        shakeMultiplier: 12,        // Cường độ rung màn hình
-        neutralRotation: 0.005,     // Xoay khi không có technique
+        positionLerpSpeed: 0.18,    // Smoother follow (was 0.5)
+        morphLerpSpeed: 0.035,       // Slower morph (was 0.1)
+        fadeInSpeed: 0.04,           // Slower fade in (was 0.08)
+        fadeOutSpeed: 0.018,         // Slower fade out (was 0.04)
+        shakeMultiplier: 10,         // Cường độ rung màn hình
+        neutralRotation: 0.0018,     // Slower idle rotation (was 0.005)
     },
 
     // =================== PROJECTILE (búng tay) ===================
@@ -174,6 +174,42 @@ const CONFIG = {
         height: 720,
         cameraZ: 55,            // Khoảng cách camera 3D
         fov: 75,                // Field of view
+    },
+
+    // =================== SUKUNA DOMAIN (Malevolent Shrine) ===================
+    SUKUNA: {
+        // Crimson shrine particle rings
+        ringRadius: 28,
+        ringColor: { r: 1.8, g: 0.05, b: 0.05 },    // Deep crimson
+        ringSize: 2.8,
+
+        // Inner bone/skull debris ring
+        innerRadius: 14,
+        innerColor: { r: 0.9, g: 0.3, b: 0.1 },     // Dark orange-red
+        innerSize: 1.8,
+
+        // Outer scattered curse energy
+        outerMinRadius: 32,
+        outerMaxRadius: 110,
+        outerColor: { r: 0.35, g: 0.0, b: 0.0 },
+        outerSize: 0.6,
+
+        // Slow, ominous rotation
+        rotationZ: 0.0012,
+        rotationX: 0.0003,
+
+        bloom: 4.0,
+        shake: 0.15,
+
+        posX: 0,
+        posY: -3,
+        posZ: 0,
+
+        // Intro: slow dark portal opening
+        introDuration: 120,       // Slower, more ominous
+        introSpeed: 3,
+        introBloom: 4.5,
+        introShake: 1.0,
     },
 
     // =================== DEBUG ===================
