@@ -176,41 +176,7 @@ const CONFIG = {
         fov: 75,                // Field of view
     },
 
-    // =================== SUKUNA DOMAIN (Malevolent Shrine) ===================
-    SUKUNA: {
-        // Crimson shrine particle rings
-        ringRadius: 28,
-        ringColor: { r: 1.8, g: 0.05, b: 0.05 },    // Deep crimson
-        ringSize: 2.8,
 
-        // Inner bone/skull debris ring
-        innerRadius: 14,
-        innerColor: { r: 0.9, g: 0.3, b: 0.1 },     // Dark orange-red
-        innerSize: 1.8,
-
-        // Outer scattered curse energy
-        outerMinRadius: 32,
-        outerMaxRadius: 110,
-        outerColor: { r: 0.35, g: 0.0, b: 0.0 },
-        outerSize: 0.6,
-
-        // Slow, ominous rotation
-        rotationZ: 0.0012,
-        rotationX: 0.0003,
-
-        bloom: 4.0,
-        shake: 0.15,
-
-        posX: 0,
-        posY: -3,
-        posZ: 0,
-
-        // Intro: slow dark portal opening
-        introDuration: 120,       // Slower, more ominous
-        introSpeed: 3,
-        introBloom: 4.5,
-        introShake: 1.0,
-    },
 
     // =================== DEBUG ===================
     DEBUG: {

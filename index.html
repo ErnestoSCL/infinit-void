@@ -165,45 +165,11 @@
         </div>
         <div id="bottom-bar">
             <div id="status">SAT0RU SYSTEM ACTIVE</div>
-            <div id="gesture-hint" style="font-size:0.55rem;letter-spacing:2px;color:rgba(255,255,255,0.2);margin-top:6px;text-transform:uppercase;transition:color 0.2s;"></div>
         </div>
     </div>
     </div>
     <div id="dim-overlay"></div>
-    <button id="sukuna-btn" onclick="triggerSukuna()" style="
-        position:fixed;bottom:24px;right:24px;z-index:9999;
-        background:rgba(120,0,0,0.85);color:#ff4422;
-        border:1.5px solid #cc2200;border-radius:8px;
-        padding:10px 18px;font-family:monospace;font-size:0.75rem;
-        letter-spacing:3px;text-transform:uppercase;cursor:pointer;
-        box-shadow:0 0 18px #cc220055;backdrop-filter:blur(6px);
-        transition:all 0.2s;
-    " onmouseover="this.style.background='rgba(180,0,0,0.95)';this.style.boxShadow='0 0 30px #ff220099';"
-       onmouseout="this.style.background='rgba(120,0,0,0.85)';this.style.boxShadow='0 0 18px #cc220055';">
-        伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">MALEVOLENT SHRINE</span>
-    </button>
 
-    <script>
-        function triggerSukuna() {
-            const btn = document.getElementById('sukuna-btn');
-            if (!window._sukunaTrigger) {
-                // Activate
-                window._sukunaTrigger = true;
-                btn.textContent = '';
-                btn.innerHTML = '伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">▶ ACTIVE — CLICK TO CANCEL</span>';
-                btn.style.color = '#ffaa00';
-                btn.style.borderColor = '#aa7700';
-                btn.style.background = 'rgba(160,40,0,0.9)';
-            } else {
-                // Cancel
-                window._sukunaTrigger = false;
-                btn.innerHTML = '伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">MALEVOLENT SHRINE</span>';
-                btn.style.color = '#ff4422';
-                btn.style.borderColor = '#cc2200';
-                btn.style.background = 'rgba(120,0,0,0.85)';
-            }
-        }
-    </script>
     <script type="module">
         import * as THREE from 'three';
         import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -211,8 +177,6 @@
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
         import CONFIG from './config.js';
 
-        // ============================================================
-        //  THREE.JS SETUP
         // ============================================================
         //  THREE.JS SETUP
         // ============================================================
@@ -287,7 +251,6 @@
         const redSystem = createBallSystem();
         const blueSystem = createBallSystem();
         const voidSystem = createBallSystem();  // Independent void black hole
-        const sukunaSystem = createBallSystem(); // Sukuna Malevolent Shrine
 
         // ============================================================
         //  PARTICLE SHAPE GENERATORS
@@ -372,126 +335,82 @@
             const C = CONFIG.VOID;
             const t = i / BALL_COUNT;
 
-            // Layer 1: Bright accretion ring (main glowing torus)
-            if (t < 0.25) {
+            // Layer 1: Blazing accretion ring — main cyan/white halo
+            if (t < 0.18) {
                 const angle = Math.random() * Math.PI * 2;
-                const ringR = C.ringRadius + (Math.random() - 0.5) * 4;
-                const thickness = (Math.random() - 0.5) * 2;
-                const brightness = 1.5 + Math.random() * 1.5;
+                const ringR = C.ringRadius + (Math.random() - 0.5) * 5;
+                const brightness = 1.8 + Math.random() * 1.4;
                 return {
-                    x: ringR * Math.cos(angle), y: ringR * Math.sin(angle), z: thickness,
-                    r: C.ringColor.r * brightness, g: C.ringColor.g * brightness, b: C.ringColor.b * brightness, s: C.ringSize * (0.8 + Math.random() * 0.6)
+                    x: ringR * Math.cos(angle), y: ringR * Math.sin(angle), z: (Math.random()-0.5)*1.5,
+                    r: C.ringColor.r * brightness, g: C.ringColor.g * brightness, b: C.ringColor.b * brightness,
+                    s: C.ringSize * (0.9 + Math.random() * 0.7)
                 };
             }
-            // Layer 2: Inner glow ring (closer to event horizon)
-            if (t < 0.40) {
+            // Layer 2: Inner blue-white glow (event horizon edge)
+            if (t < 0.28) {
                 const angle = Math.random() * Math.PI * 2;
-                const innerR = C.ringRadius * 0.6 + (Math.random() - 0.5) * 3;
+                const innerR = C.ringRadius * 0.55 + (Math.random() - 0.5) * 2.5;
                 return {
-                    x: innerR * Math.cos(angle), y: innerR * Math.sin(angle), z: (Math.random() - 0.5) * 1.5,
-                    r: 0.3, g: 0.6, b: 1.2, s: C.ringSize * 0.7
+                    x: innerR * Math.cos(angle), y: innerR * Math.sin(angle), z: (Math.random()-0.5)*1.2,
+                    r: 0.4, g: 0.75, b: 1.4, s: C.ringSize * 0.8
                 };
             }
-            // Layer 3: Accretion disk (flat band, tilted look)
-            if (t < 0.60) {
-                const diskR = C.ringRadius * (0.4 + Math.random() * 0.8);
-                const angle = Math.random() * Math.PI * 2;
-                const diskTilt = 0.15; // slight tilt
+            // Layer 3: Galaxy nebula BLOBS — coloured cloud patches scattered around
+            if (t < 0.52) {
+                // Pick a random nebula centre somewhere in the field
+                const nc = (t - 0.28) / 0.24; // 0..1
+                const seed = Math.floor(nc * 14);   // up to 14 distinct nebula centres
+                const rx = Math.sin(seed * 2.399) * 55;   // deterministic spread
+                const ry = Math.cos(seed * 1.618) * 42;
+                // Scatter around that centre
+                const ox = (Math.random() - 0.5) * 22;
+                const oy = (Math.random() - 0.5) * 16;
+                const oz = (Math.random() - 0.5) * 18;
+                // Colour palette: cyan → violet → deep blue
+                const hue = (seed % 3);
+                const bright = 0.15 + Math.random() * 0.45;
+                const r = hue === 0 ? 0 : (hue === 1 ? bright * 0.6 : bright * 0.2);
+                const g = hue === 0 ? bright * 0.5 : (hue === 1 ? 0 : bright * 0.3);
+                const b = bright * 1.2;
+                return { x: rx+ox, y: ry+oy, z: oz, r, g, b, s: 0.5 + Math.random() * 1.2 };
+            }
+            // Layer 4: Spiral galaxy arms — two faint sweeping arcs
+            if (t < 0.72) {
+                const arm = Math.floor(Math.random() * 2);
+                const armOffset = arm * Math.PI;
+                const tArm = Math.random();
+                const angle = tArm * Math.PI * 3 + armOffset;
+                const radius = C.ringRadius * 0.8 + tArm * 55;
+                const spread = (Math.random() - 0.5) * (8 + tArm * 14);
+                const bright = (1 - tArm) * 0.35;
                 return {
-                    x: diskR * Math.cos(angle), y: diskR * Math.sin(angle) * diskTilt, z: diskR * Math.sin(angle) * 0.3,
-                    r: 0.15, g: 0.35, b: 0.7, s: 0.6 + Math.random() * 0.4
+                    x: radius * Math.cos(angle), y: radius * Math.sin(angle) * 0.4 + spread * 0.3, z: spread,
+                    r: bright * 0.2, g: bright * 0.55, b: bright * 1.3,
+                    s: 0.35 + Math.random() * 0.7
                 };
             }
-            // Layer 4: Orbital debris / scattered particles
-            if (t < 0.80) {
-                const orbitR = C.ringRadius + Math.random() * 30;
-                const angle = Math.random() * Math.PI * 2;
-                const spread = (Math.random() - 0.5) * 15;
+            // Layer 5: Star field — tiny bright points scattered in 3-D sphere
+            if (t < 0.88) {
+                const farR = 30 + Math.random() * 70;
+                const th2 = Math.random() * Math.PI * 2;
+                const ph2 = Math.acos(2 * Math.random() - 1);
+                const isBright = Math.random() > 0.7;
+                const br = isBright ? 1.2 : 0.25;
                 return {
-                    x: orbitR * Math.cos(angle), y: orbitR * Math.sin(angle), z: spread,
-                    r: 0.1, g: 0.3, b: 0.6, s: 0.3 + Math.random() * 0.5
+                    x: farR*Math.sin(ph2)*Math.cos(th2), y: farR*Math.sin(ph2)*Math.sin(th2), z: farR*Math.cos(ph2),
+                    r: br*0.6, g: br*0.9, b: br*1.4, s: isBright ? 1.4 : 0.4
                 };
             }
-            // Layer 5: Far scattered stars/dust
+            // Layer 6: Deep space dust — very faint, far out
             const farR = C.outerMinRadius + Math.random() * (C.outerMaxRadius - C.outerMinRadius);
             const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
             return {
-                x: farR * Math.sin(ph) * Math.cos(th), y: farR * Math.sin(ph) * Math.sin(th), z: farR * Math.cos(ph),
-                r: C.outerColor.r, g: C.outerColor.g, b: C.outerColor.b, s: C.outerSize * (0.3 + Math.random() * 0.5)
+                x: farR*Math.sin(ph)*Math.cos(th), y: farR*Math.sin(ph)*Math.sin(th), z: farR*Math.cos(ph),
+                r: C.outerColor.r * 0.4, g: C.outerColor.g * 0.6, b: C.outerColor.b,
+                s: C.outerSize * (0.2 + Math.random() * 0.4)
             };
         }
 
-        // ---- Sukuna Malevolent Shrine — Shrine + skulls + crimson sky ----
-        function genSukunaIntro(i) {
-            // Crimson lightning bolts raining down from the top
-            const x = (Math.random() - 0.5) * 160;
-            const y = 10 + Math.random() * 55; // spawn high up
-            const z = (Math.random() - 0.5) * 40;
-            const bright = 0.8 + Math.random() * 0.9;
-            // Mix crimson + deep red
-            return { x, y, z, r: bright * 1.4, g: bright * 0.02, b: 0, s: 0.5 + Math.random() * 2.8 };
-        }
-
-        function genSukuna(i) {
-            const t = i / BALL_COUNT;
-
-            // === LAYER 1 (0-18%): Crimson sky — swirling energy above ===
-            if (t < 0.18) {
-                const angle = Math.random() * Math.PI * 2;
-                const r = 35 + Math.random() * 55;
-                const y = 15 + Math.random() * 40;
-                const bright = 1.0 + Math.random() * 1.2;
-                return { x: r*Math.cos(angle), y, z: r*Math.sin(angle)*0.4,
-                    r: bright*1.3, g: bright*0.02, b: 0, s: 0.4 + Math.random()*1.5 };
-            }
-
-            // === LAYER 2 (18-32%): Pagoda pillars — two vertical columns ===
-            if (t < 0.32) {
-                const side = Math.random() > 0.5 ? 1 : -1;
-                const px = side * (5 + Math.random() * 3);
-                const py = -10 + Math.random() * 28; // tall column
-                return { x: px, y: py, z: (Math.random()-0.5)*3,
-                    r: 1.4, g: 0.1, b: 0.05, s: 1.0 + Math.random()*0.8 };
-            }
-
-            // === LAYER 3 (32-44%): Shrine roof — triangle peak at top ===
-            if (t < 0.44) {
-                const rx = (Math.random()-0.5) * 22;
-                const ry = 16 + Math.random() * 12;
-                return { x: rx, y: ry, z: (Math.random()-0.5)*4,
-                    r: 1.2, g: 0.08, b: 0.0, s: 0.8 + Math.random()*1.2 };
-            }
-
-            // === LAYER 4 (44-62%): Skull/bone spikes growing from base ===
-            if (t < 0.62) {
-                // Skulls in clusters around perimeter
-                const clusterAngle = Math.random() * Math.PI * 2;
-                const clusterR = 18 + Math.random() * 30;
-                const cx = clusterR * Math.cos(clusterAngle);
-                const cz = clusterR * Math.sin(clusterAngle) * 0.3;
-                // Each skull = tight cluster of particles
-                const ox = (Math.random()-0.5) * 4;
-                const oy = -18 + Math.random() * 10; // below center
-                return { x: cx+ox, y: oy, z: cz,
-                    r: 0.85, g: 0.75, b: 0.65, s: 1.2 + Math.random()*1.5 };
-            }
-
-            // === LAYER 5 (62-76%): Teal reflection below (floor mirror) ===
-            if (t < 0.76) {
-                const rx = (Math.random()-0.5) * 60;
-                const ry = -18 - Math.random() * 20;
-                const bright = 0.3 + Math.random() * 0.5;
-                return { x: rx, y: ry, z: (Math.random()-0.5)*20,
-                    r: 0, g: bright*0.8, b: bright*1.2, s: 0.5 + Math.random()*0.9 };
-            }
-
-            // === LAYER 6 (76-100%): Dark outer debris ===
-            const angle = Math.random() * Math.PI * 2;
-            const r = 40 + Math.random() * 55;
-            const oy = -5 + (Math.random()-0.5)*30;
-            return { x: r*Math.cos(angle), y: oy, z: r*Math.sin(angle)*0.35,
-                r: 0.3, g: 0.0, b: 0.0, s: 0.3 + Math.random()*0.5 };
-        }
 
         function genEmpty(i) {
             return { x: 0, y: 0, z: 0, r: 0, g: 0, b: 0, s: 0 };
@@ -515,9 +434,6 @@
         let shakeIntensity = 0;
         let snapCooldown = 0;
 
-        // Sukuna state
-        let sukunaPhase = 0; // 0=off, 1=intro, 2=shrine
-        let sukunaTimer = 0;
 
         // Projectile
         let projectileActive = false;
@@ -559,21 +475,6 @@
                 && isFingerExtended(lm, 16, 14)
                 && isFingerExtended(lm, 20, 18);
         }
-        // Sukuna shrine-roof: fingertips of both hands touch forming a triangle.
-        // Both index tips must meet in the middle, index+middle extended on each hand.
-        function detectSukunaPrayer(leftLm, rightLm) {
-            if (!leftLm || !rightLm) return false;
-            // At least index + middle extended on both hands
-            const extL = isFingerExtended(leftLm, 8, 6) && isFingerExtended(leftLm, 12, 10);
-            const extR = isFingerExtended(rightLm, 8, 6) && isFingerExtended(rightLm, 12, 10);
-            if (!extL || !extR) return false;
-            // Index tips from both hands must be close (< 0.18 in normalized coords)
-            const idxDist = Math.hypot(
-                leftLm[8].x - rightLm[8].x,
-                leftLm[8].y - rightLm[8].y
-            );
-            return idxDist < 0.18;
-        }
         function lmToScreen(lm) {
             return { x: (1 - lm.x) * window.innerWidth, y: lm.y * window.innerHeight };
         }
@@ -593,7 +494,6 @@
             let leftCrossed = false, rightCrossed = false;
             let leftSnap = false, rightSnap = false;
             let crossedScreen = null;
-            let leftLm = null, rightLm = null;  // raw landmarks for Sukuna gesture
 
             if (results.multiHandLandmarks && results.multiHandedness) {
                 for (let h = 0; h < results.multiHandLandmarks.length; h++) {
@@ -601,9 +501,6 @@
                     const label = results.multiHandedness[h].label;
                     const isLeft = label === 'Right';  // MP mirrored
                     const isRight = label === 'Left';
-
-                    if (isLeft) leftLm = lm;
-                    if (isRight) rightLm = lm;
 
                     if (isCrossedFingers(lm)) {
                         if (isLeft) leftCrossed = true;
@@ -655,9 +552,7 @@
                         const labelText = isLeft ? 'LEFT' : 'RIGHT';
 
                         let color;
-                        if (currentTechnique === 'sukuna') {
-                            color = '#ff2200';
-                        } else if (currentTechnique === 'void') {
+                        if (currentTechnique === 'void') {
                             color = '#00eeff';
                         } else if (currentTechnique === 'purple' || purpleMode || currentTechnique === 'fusing') {
                             color = '#bb44ff';
@@ -704,69 +599,6 @@
 
             const prevTech = currentTechnique;
 
-            // --- Gesture hint indicator ---
-            const gestureHintEl = document.getElementById('gesture-hint');
-            if (leftLm && rightLm) {
-                const d = Math.hypot(leftLm[8].x - rightLm[8].x, leftLm[8].y - rightLm[8].y);
-                const pct = Math.max(0, Math.min(1, 1 - d / 0.18));
-                if (pct > 0.3) {
-                    gestureHintEl.textContent = `SHRINE SEAL: ${Math.round(pct*100)}%`;
-                    const r = Math.round(180 + pct * 75);
-                    const g = Math.round(30 * (1 - pct));
-                    gestureHintEl.style.color = `rgb(${r},${g},0)`;
-                } else {
-                    gestureHintEl.textContent = '';
-                    gestureHintEl.style.color = 'rgba(255,255,255,0.2)';
-                }
-            } else {
-                gestureHintEl.textContent = '';
-            }
-
-            // ═══════════════════════════════════════════════
-            //  PRIORITY 0: Sukuna Domain (prayer hands)
-            // ═══════════════════════════════════════════════
-            const sukunaPrayer = detectSukunaPrayer(leftLm, rightLm) || !!window._sukunaTrigger;
-            // Button toggle: cancel shrine if clicked again while active
-            if (window._sukunaTrigger && sukunaPhase > 0 && !detectSukunaPrayer(leftLm, rightLm)) {
-                // keep active — cleared only when user clicks button again (trigger turns false)
-            }
-            if (window._sukunaTrigger === false && sukunaPhase > 0) {
-                sukunaPhase = 0; sukunaTimer = 0;
-                sukunaSystem.visible = false; sukunaSystem.opacity = 0;
-                sukunaSystem.currentShape = '';
-                sukunaSystem.points.scale.set(1,1,1);
-                sukunaSystem.points.rotation.set(0,0,0);
-                dimOverlay.style.background = '#000';
-                currentTechnique = 'neutral'; updateUI('neutral');
-                window._sukunaTrigger = undefined;
-            }
-            if (sukunaPrayer && sukunaPhase === 0 && !projectileActive) {
-                sukunaPhase = 1; sukunaTimer = 0;
-                setShape(sukunaSystem, genSukunaIntro);
-                sukunaSystem.currentShape = 'sukunaIntro';
-                sukunaSystem.worldPos.set(0, 0, 0);
-                sukunaSystem.targetWorldPos.set(0, 0, 0);
-                currentTechnique = 'sukuna';
-                updateUI('sukuna');
-            }
-            if (sukunaPhase > 0) {
-                currentTechnique = 'sukuna';
-                purpleMode = false;
-                if (fusionActive) { fusionActive = false; fusionPhase = 0; }
-                sukunaSystem.visible = true; sukunaSystem.opacity = 1;
-                redSystem.visible = false; redSystem.opacity = 0;
-                blueSystem.visible = false; blueSystem.opacity = 0;
-                if (sukunaPhase === 1) { bloomPass.strength = CONFIG.SUKUNA.introBloom; shakeIntensity = CONFIG.SUKUNA.introShake; }
-                else { bloomPass.strength = CONFIG.SUKUNA.bloom; shakeIntensity = CONFIG.SUKUNA.shake; }
-            }
-            // Other gesture clears sukuna
-            if ((leftCrossed || rightCrossed) && sukunaPhase > 0) {
-                sukunaPhase = 0; sukunaTimer = 0;
-                sukunaSystem.visible = false; sukunaSystem.opacity = 0;
-                sukunaSystem.currentShape = '';
-                dimOverlay.style.background = '#000';
-            }
-
             // ═══════════════════════════════════════════════
             //  PRIORITY 1: Unlimited Void (crossed fingers)
             // ═══════════════════════════════════════════════
@@ -777,8 +609,8 @@
                 redSystem.visible = false; blueSystem.visible = false;
             }
 
-            // Trigger & Maintain (skip if Sukuna shrine is active)
-            if ((leftCrossed || rightCrossed || voidPhase === 1) && !projectileActive && sukunaPhase === 0) {
+            // Trigger & Maintain
+            if ((leftCrossed || rightCrossed || voidPhase === 1) && !projectileActive) {
                 currentTechnique = 'void';
                 purpleMode = false;
                 if (fusionActive) { fusionActive = false; fusionPhase = 0; }
@@ -1046,7 +878,6 @@
                 fusing: { text: '虚式 — MERGING CURSED ENERGY...', color: '#ff66ff' },
                 purple: { text: '茈 — HOLLOW TECHNIQUE: PURPLE', color: '#bb44ff' },
                 void: { text: '無量空処 — DOMAIN EXPANSION: INFINITE VOID', color: '#00eeff' },
-                sukuna: { text: '領域展開 — 伏魔御廚子 MALEVOLENT SHRINE', color: '#ff2200' },
             };
             const info = map[tech] || map.neutral;
             techniqueNameEl.textContent = info.text;
@@ -1228,53 +1059,9 @@
                 }
             }
 
-            // Update all systems
             updateSystem(redSystem);
             updateSystem(blueSystem);
             updateSystem(voidSystem);
-            updateSystem(sukunaSystem);
-
-            // Sukuna animation (Malevolent Shrine intro + rotation)
-            if (currentTechnique === 'sukuna' && (sukunaPhase === 1 || sukunaPhase === 2)) {
-                sukunaTimer++;
-                if (sukunaPhase === 1) {
-                    // Rain down from top
-                    const positions = sukunaSystem.points.geometry.attributes.position.array;
-                    for (let i = 0; i < BALL_COUNT; i++) {
-                        let y = positions[i * 3 + 1];
-                        y -= CONFIG.SUKUNA.introSpeed;
-                        if (y < -50) y += 100;
-                        positions[i * 3 + 1] = y;
-                    }
-                    sukunaSystem.points.geometry.attributes.position.needsUpdate = true;
-                    if (sukunaTimer > CONFIG.SUKUNA.introDuration) {
-                        sukunaPhase = 2;
-                        sukunaTimer = 0;
-                        setShape(sukunaSystem, genSukuna);
-                        sukunaSystem.currentShape = 'sukuna';
-                        updateUI('sukuna');
-                    }
-                } else {
-                    // Shrine rotates on Y only — reliquary spinning in place
-                    sukunaSystem.points.rotation.y += CONFIG.SUKUNA.rotationZ * 0.8;
-                    // Subtle breathing pulse — skulls seem to grow and retract
-                    const pulse = 1.0 + Math.sin(sukunaTimer * 0.02) * 0.045;
-                    sukunaSystem.points.scale.set(pulse, pulse, pulse);
-                }
-                dimOverlay.style.opacity = 0.88;
-                dimOverlay.style.background = 'rgba(10,0,0,1)';
-            } else if (currentTechnique !== 'sukuna' && sukunaSystem.visible) {
-                sukunaSystem.opacity -= CONFIG.ANIMATION.fadeOutSpeed;
-                if (sukunaSystem.opacity <= 0) {
-                    sukunaSystem.visible = false;
-                    sukunaSystem.opacity = 0;
-                    sukunaSystem.currentShape = '';
-                    sukunaSystem.points.scale.set(1, 1, 1);
-                    sukunaSystem.points.rotation.set(0, 0, 0);
-                    sukunaPhase = 0;
-                    dimOverlay.style.background = '#000';
-                }
-            }
 
             // Void handling (Warp Animation)
             if (currentTechnique === 'void') {
