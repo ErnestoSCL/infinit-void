@@ -170,7 +170,40 @@
     </div>
     </div>
     <div id="dim-overlay"></div>
+    <button id="sukuna-btn" onclick="triggerSukuna()" style="
+        position:fixed;bottom:24px;right:24px;z-index:9999;
+        background:rgba(120,0,0,0.85);color:#ff4422;
+        border:1.5px solid #cc2200;border-radius:8px;
+        padding:10px 18px;font-family:monospace;font-size:0.75rem;
+        letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+        box-shadow:0 0 18px #cc220055;backdrop-filter:blur(6px);
+        transition:all 0.2s;
+    " onmouseover="this.style.background='rgba(180,0,0,0.95)';this.style.boxShadow='0 0 30px #ff220099';"
+       onmouseout="this.style.background='rgba(120,0,0,0.85)';this.style.boxShadow='0 0 18px #cc220055';">
+        伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">MALEVOLENT SHRINE</span>
+    </button>
 
+    <script>
+        function triggerSukuna() {
+            const btn = document.getElementById('sukuna-btn');
+            if (!window._sukunaTrigger) {
+                // Activate
+                window._sukunaTrigger = true;
+                btn.textContent = '';
+                btn.innerHTML = '伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">▶ ACTIVE — CLICK TO CANCEL</span>';
+                btn.style.color = '#ffaa00';
+                btn.style.borderColor = '#aa7700';
+                btn.style.background = 'rgba(160,40,0,0.9)';
+            } else {
+                // Cancel
+                window._sukunaTrigger = false;
+                btn.innerHTML = '伏魔御廚子<br><span style="font-size:0.6rem;opacity:0.7;">MALEVOLENT SHRINE</span>';
+                btn.style.color = '#ff4422';
+                btn.style.borderColor = '#cc2200';
+                btn.style.background = 'rgba(120,0,0,0.85)';
+            }
+        }
+    </script>
     <script type="module">
         import * as THREE from 'three';
         import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -692,7 +725,21 @@
             // ═══════════════════════════════════════════════
             //  PRIORITY 0: Sukuna Domain (prayer hands)
             // ═══════════════════════════════════════════════
-            const sukunaPrayer = detectSukunaPrayer(leftLm, rightLm);
+            const sukunaPrayer = detectSukunaPrayer(leftLm, rightLm) || !!window._sukunaTrigger;
+            // Button toggle: cancel shrine if clicked again while active
+            if (window._sukunaTrigger && sukunaPhase > 0 && !detectSukunaPrayer(leftLm, rightLm)) {
+                // keep active — cleared only when user clicks button again (trigger turns false)
+            }
+            if (window._sukunaTrigger === false && sukunaPhase > 0) {
+                sukunaPhase = 0; sukunaTimer = 0;
+                sukunaSystem.visible = false; sukunaSystem.opacity = 0;
+                sukunaSystem.currentShape = '';
+                sukunaSystem.points.scale.set(1,1,1);
+                sukunaSystem.points.rotation.set(0,0,0);
+                dimOverlay.style.background = '#000';
+                currentTechnique = 'neutral'; updateUI('neutral');
+                window._sukunaTrigger = undefined;
+            }
             if (sukunaPrayer && sukunaPhase === 0 && !projectileActive) {
                 sukunaPhase = 1; sukunaTimer = 0;
                 setShape(sukunaSystem, genSukunaIntro);
