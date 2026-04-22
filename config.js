@@ -13,96 +13,84 @@ const CONFIG = {
 
     // =================== RED BALL (tay trái) ===================
     RED: {
-        // Phần lõi cầu tròn
-        coreRatio: 0.12,        // % hạt nằm ở lõi (0.0 - 1.0)
-        coreRadius: 7,          // Bán kính lõi
-        coreColor: { r: 3, g: 0.1, b: 0.1 },   // Màu lõi (giá trị > 1 = sáng hơn)
-        coreSize: 2.5,          // Kích thước hạt lõi
+        coreRatio: 0.12,
+        coreRadius: 7,
+        coreColor: { r: 5.0, g: 0.15, b: 0.1 },   // Brighter hot white-red core
+        coreSize: 3.2,
 
-        // Cánh tay xoắn spiral
-        arms: 3,                // Số cánh xoắn
-        spiralSpeed: 15,        // Tốc độ xoắn (cao hơn = xoắn tighter)
-        spiralRadius: 30,       // Bán kính tối đa của spiral
-        spiralStartRadius: 2,   // Bán kính bắt đầu
-        spiralDepth: 8,         // Độ dày theo trục Z
-        armColor: { r: 0.8, g: 0, b: 0 },
-        armSize: 1.0,
+        arms: 3,
+        spiralSpeed: 15,
+        spiralRadius: 30,
+        spiralStartRadius: 2,
+        spiralDepth: 8,
+        armColor: { r: 1.4, g: 0.05, b: 0 },      // Vivid crimson arms
+        armSize: 1.4,
 
-        // Rotation
-        rotationSpeed: -0.025,   // Slowed rotation (was -0.08)
+        rotationSpeed: -0.025,
 
-        // Bloom & shake
-        bloom: 2.5,
+        bloom: 4.5,
         shake: 0.18,
     },
 
     // =================== BLUE BALL (tay phải) ===================
     BLUE: {
-        // Phần lõi cầu tròn
-        coreRatio: 0.12,        // % hạt nằm ở lõi (0.0 - 1.0)
-        coreRadius: 7,          // Bán kính lõi
-        coreColor: { r: 0.2, g: 0.6, b: 3.0 },   // Tăng độ sáng (b > 1) để bloom mạnh bằng Red (3.0)
-        coreSize: 2.5,          // Kích thước hạt lõi
+        coreRatio: 0.12,
+        coreRadius: 7,
+        coreColor: { r: 0.3, g: 0.8, b: 5.0 },   // Blazing blue-white core
+        coreSize: 3.2,
 
-        // Cánh tay xoắn spiral
-        arms: 3,                // Số cánh xoắn
-        spiralSpeed: 15,        // Tốc độ xoắn (cao hơn = xoắn tighter)
-        spiralRadius: 30,       // Bán kính tối đa của spiral
-        spiralStartRadius: 2,   // Bán kính bắt đầu
-        spiralDepth: 8,         // Độ dày theo trục Z
-        armColor: { r: 0, g: 0.2, b: 0.9 },
-        armSize: 1.0,
+        arms: 3,
+        spiralSpeed: 15,
+        spiralRadius: 30,
+        spiralStartRadius: 2,
+        spiralDepth: 8,
+        armColor: { r: 0, g: 0.3, b: 1.5 },       // Deep electric blue arms
+        armSize: 1.4,
 
-        // Rotation
-        rotationSpeed: -0.025,   // Slowed rotation (was -0.08)
+        rotationSpeed: -0.025,
 
-        // Bloom & shake
-        bloom: 2.5,
+        bloom: 4.5,
         shake: 0.18,
     },
 
     // =================== PURPLE (dung hợp) ===================
     PURPLE: {
-        coreRatio: 0.8,         // 80% hạt ở lõi cầu, 20% bay xung quanh
-        coreRadius: 12,
-        coreColor: { r: 0.6, g: 0.5, b: 1.0 },
-        coreSize: 1,
+        coreRatio: 0.8,
+        coreRadius: 14,
+        coreColor: { r: 1.8, g: 0.6, b: 4.5 },   // Blazing violet-white core
+        coreSize: 2.2,
 
-        outerSpread: 50,        // Hạt ngoài bay xa tới đâu
-        outerColor: { r: 0.5, g: 0.5, b: 0.7 },
-        outerSize: 0.8,
+        outerSpread: 60,
+        outerColor: { r: 0.9, g: 0.3, b: 2.0 },   // Vivid deep purple outer
+        outerSize: 1.2,
 
-        rotationSpeedA: 0.04,   // Slowed (was 0.15)
-        rotationSpeedB: -0.03,  // Slowed (was -0.12)
+        rotationSpeedA: 0.04,
+        rotationSpeedB: -0.03,
         rotationY: 0.008,
 
-        fusionDistance: 220,     // Khoảng cách (px trên màn hình) để kích hoạt fusion
+        fusionDistance: 220,
 
-        bloom: 1,
-        shake: 1,
+        bloom: 6.5,    // Maximum glow — purple is the ultimate technique
+        shake: 1.2,
     },
 
     // =================== FUSION ANIMATION (quay vòng hút nhau) ===================
     FUSION: {
-        // Phase 1: Quỹ đạo xoay quanh nhau (binary star orbit)
-        orbitSpeed: 0.028,           // Slowed orbit (was 0.08)
-        orbitStartRadius: 20,       // Bán kính quỹ đạo ban đầu (world units)
+        orbitSpeed: 0.018,           // Slower orbit — longer dance
+        orbitStartRadius: 30,        // Larger starting orbit radius
 
-        // Phase 2: Xoắn ốc hút vào nhau
-        spiralShrinkRate: 0.985,     // Slower spiral collapse (was 0.97)
-        spiralSpeedUp: 1.008,        // Slower speed-up (was 1.02)
-        collisionRadius: 2,        // Khi bán kính < giá trị này → va chạm
+        spiralShrinkRate: 0.993,     // Very slow spiral — longer convergence
+        spiralSpeedUp: 1.004,        // Gentler speed-up
+        collisionRadius: 2,
 
-        // Phase 3: Vụ nổ + hình thành
-        explosionDuration: 70,      // Longer explosion (was 40)
-        explosionScatter: 60,       // Hạt bay xa tới đâu lúc nổ
-        explosionBloom: 6.0,        // Bloom lúc nổ
-        explosionShake: 1.5,        // Rung lúc nổ
-        reformSpeed: 0.05,          // Slower reform (was 0.08)
+        explosionDuration: 180,      // 3x longer explosion (was 70) — dramatic reform
+        explosionScatter: 90,        // More scatter = more dramatic burst
+        explosionBloom: 8.0,         // Max bloom on impact
+        explosionShake: 2.0,
+        reformSpeed: 0.04,
 
-        // Hiệu ứng khi đang orbit
-        orbitBloom: 3.5,
-        orbitShake: 0.2,
+        orbitBloom: 4.5,             // Glow during orbit dance
+        orbitShake: 0.25,
     },
 
     // =================== UNLIMITED VOID ===================
