@@ -165,6 +165,7 @@
         </div>
         <div id="bottom-bar">
             <div id="status">SAT0RU SYSTEM ACTIVE</div>
+            <div id="gesture-hint" style="font-size:0.55rem;letter-spacing:2px;color:rgba(255,255,255,0.2);margin-top:6px;text-transform:uppercase;transition:color 0.2s;"></div>
         </div>
     </div>
     </div>
@@ -525,27 +526,20 @@
                 && isFingerExtended(lm, 16, 14)
                 && isFingerExtended(lm, 20, 18);
         }
-        // Sukuna shrine-roof: hands form a triangle/pagoda-roof shape.
-        // Thumbs tips touch at bottom, index tips touch at top,
-        // all fingers extended on both hands.
+        // Sukuna shrine-roof: fingertips of both hands touch forming a triangle.
+        // Both index tips must meet in the middle, index+middle extended on each hand.
         function detectSukunaPrayer(leftLm, rightLm) {
             if (!leftLm || !rightLm) return false;
-            // All fingers extended on both hands
-            const allExtL = isFingerExtended(leftLm,8,6) && isFingerExtended(leftLm,12,10)
-                         && isFingerExtended(leftLm,16,14) && isFingerExtended(leftLm,20,18);
-            const allExtR = isFingerExtended(rightLm,8,6) && isFingerExtended(rightLm,12,10)
-                         && isFingerExtended(rightLm,16,14) && isFingerExtended(rightLm,20,18);
-            if (!allExtL || !allExtR) return false;
-            // Index fingertips must be close together at top (< 0.13)
-            const idxDist = Math.hypot(leftLm[8].x - rightLm[8].x, leftLm[8].y - rightLm[8].y);
-            if (idxDist > 0.13) return false;
-            // Thumbs must be close together at bottom (< 0.18)
-            const thumbDist = Math.hypot(leftLm[4].x - rightLm[4].x, leftLm[4].y - rightLm[4].y);
-            if (thumbDist > 0.18) return false;
-            // Index tips must be ABOVE thumbs (forming the roof peak)
-            const avgIdxY = (leftLm[8].y + rightLm[8].y) / 2;
-            const avgThumbY = (leftLm[4].y + rightLm[4].y) / 2;
-            return avgIdxY < avgThumbY;
+            // At least index + middle extended on both hands
+            const extL = isFingerExtended(leftLm, 8, 6) && isFingerExtended(leftLm, 12, 10);
+            const extR = isFingerExtended(rightLm, 8, 6) && isFingerExtended(rightLm, 12, 10);
+            if (!extL || !extR) return false;
+            // Index tips from both hands must be close (< 0.18 in normalized coords)
+            const idxDist = Math.hypot(
+                leftLm[8].x - rightLm[8].x,
+                leftLm[8].y - rightLm[8].y
+            );
+            return idxDist < 0.18;
         }
         function lmToScreen(lm) {
             return { x: (1 - lm.x) * window.innerWidth, y: lm.y * window.innerHeight };
@@ -676,6 +670,24 @@
             }
 
             const prevTech = currentTechnique;
+
+            // --- Gesture hint indicator ---
+            const gestureHintEl = document.getElementById('gesture-hint');
+            if (leftLm && rightLm) {
+                const d = Math.hypot(leftLm[8].x - rightLm[8].x, leftLm[8].y - rightLm[8].y);
+                const pct = Math.max(0, Math.min(1, 1 - d / 0.18));
+                if (pct > 0.3) {
+                    gestureHintEl.textContent = `SHRINE SEAL: ${Math.round(pct*100)}%`;
+                    const r = Math.round(180 + pct * 75);
+                    const g = Math.round(30 * (1 - pct));
+                    gestureHintEl.style.color = `rgb(${r},${g},0)`;
+                } else {
+                    gestureHintEl.textContent = '';
+                    gestureHintEl.style.color = 'rgba(255,255,255,0.2)';
+                }
+            } else {
+                gestureHintEl.textContent = '';
+            }
 
             // ═══════════════════════════════════════════════
             //  PRIORITY 0: Sukuna Domain (prayer hands)
